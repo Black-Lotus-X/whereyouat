@@ -6,44 +6,53 @@ class ChatClientComponent extends React.Component {
     super(props);
     this.state = {
       userInput: '',
-      chatArr: []
+      chatArr: [],
+      currentUserSpeaking: ''
     }
     this.socket = io();
 
     // bind methods here
-    this.displaySocketChat = this.displaySocketChat.bind(this);
-    this.handleMessages = this.handleMessages.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.handleRecieveMessage = this.handleRecieveMessage.bind(this);
     
     // listens to chat message event coming from server
-    this.socket.on('chat message', this.handleMessages);
+    this.socket.on('chat message', (data) => {
+      console.log('chat message data', data);
+      this.handleRecieveMessage(data)
+    });
+    // this.socket.on('chat message', (data) => {})
   }
 
   // place methods here
 
 
-  handleMessages(userInput) {
-    console.log('userInput SENT: ', userInput);
+  handleRecieveMessage(dataRecievedFromServer) {
+    console.log('UserInput entered: ', dataRecievedFromServer);
+
     let newArr = this.state.chatArr.slice();
     
-    newArr.push(userInput.message);
+    newArr.push([dataRecievedFromServer.user, dataRecievedFromServer.message]);
+
 
     this.setState({
-      chatArr: newArr
-    })
+      chatArr: newArr,
+      currentUserSpeaking: dataRecievedFromServer.user
+    }, () => console.log(this.state.chatArr))
   }
 
   // click event for sending data to server
-  displaySocketChat(e){
+  sendMessage(e){
     e.preventDefault();
-
-    // user input state was already changed in onChange
     // emit a chat message from your client to your server with the obj
     this.socket.emit('chat message', {
-      message: this.state.userInput
+      user: this.props.username,
+      message: this.state.userInput 
     });
-    this.handleMessages({
-      message: this.state.userInput
-    });
+
+    // this.handleMessages({
+    //   // maybe i should be passing the user name in here too?
+    //   message: this.state.userInput
+    // });
     //listen for events coming back from server
   }
 
@@ -56,11 +65,11 @@ class ChatClientComponent extends React.Component {
         <div className='socket-chat-container'>
           <ul id="messages">
             {this.state.chatArr.map((chat, i) =>
-              <li key={i}>{this.props.username}: {chat}</li>
+              <li key={i}>{chat[0]}: {chat[1]}</li>
             )}
           </ul>
         </div>
-        <form action="" onSubmit={this.displaySocketChat}>
+        <form action="" onSubmit={this.sendMessage}>
           <input
             onChange={(e) => this.setState({userInput: e.target.value})}
             id="messageInput" 
