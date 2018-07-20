@@ -122,7 +122,8 @@ class App extends React.Component {
         username: username,
         loggedIn: true,
         loginError: '',
-        login: false
+        login: false,
+        removeLogoutBtn: true
       })
       this.getFriends(username);
     })
@@ -137,13 +138,20 @@ class App extends React.Component {
   getFriends(username) {
     axios.get(`/whereyouat/${username}/friends`)
     .then((response) => {
-      let newFriends = response.data.map((friendObject) => {
-        return friendObject.friend;
-      });
+      console.log('friend response data', response.data)
+      if(response.data[0].friend === '') {
+        this.setState({
+          friends: []
+        })
+      } else {
+        let newFriends = response.data.map((friendObject) => {
+          return friendObject.friend;
+        });
 
-      this.setState({
-        friends: newFriends
-      })
+        this.setState({
+          friends: newFriends
+        })
+      }
     })
   }
 
@@ -154,7 +162,7 @@ class App extends React.Component {
         fromWho: friend
       }
     })
-    .then((res)=>{
+    .then((res)=> {
       this.getFriends(username)
       console.log('Sending Delete req to server');
     })

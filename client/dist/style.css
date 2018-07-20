@@ -20,7 +20,7 @@
 .clearfix::after {
   content: "";
   clear: both;
-  display: block; 
+  display: block;
 }
 
 
@@ -283,6 +283,7 @@ header {
     vertical-align: top;
     box-shadow: 0 1px 1px 0 rgba(60,64,67,.08), 0 1px 3px 1px rgba(60,64,67,.16);
     background-color: #ecf0f1;
+    overflow: scroll;
 }
 
 .friends-list-container .socket-chat-title-box {
@@ -356,5 +357,3 @@ header {
   height: 500px;
   width: 350px;
 }
-
-

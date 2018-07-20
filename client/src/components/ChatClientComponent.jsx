@@ -15,7 +15,7 @@ class ChatClientComponent extends React.Component {
     this.sendMessage = this.sendMessage.bind(this);
     this.saveFriend = this.saveFriend.bind(this);
     this.handleMessage = this.handleMessage.bind(this);
-    
+
     // listens to chat message event coming from server
     this.socket.on('chat message', (data) => {
       console.log('chat message data', data);
@@ -37,25 +37,28 @@ class ChatClientComponent extends React.Component {
     });
   }
 
-  saveFriend(friend, username){
-    console.log('target:', friend);
-    this.setState({
-      saveClickedFriend: friend
-    }, () => console.log('Friend selected to save', this.state.saveClickedFriend))
+  saveFriend(friend, username) {
+    axios.get(`/whereyouat/${username}/friends`)
+    .then((response) => {
+      let newFriends = response.data.map((friendObject) => {
+        return friendObject.friend;
+      });
+      this.setState({
+        saveClickedFriend: friend
+      })
 
-    // this.props.username is current user logged in
-    axios.post(`/whereyouat/${username}/friends`, {
-      username: this.props.username,
-      fromWho: friend
-    })
-    .then((res)=> {
-      this.props.getFriends(username)
-      console.log('Sending friend to server: ', res);
-    })
-    .catch((res) => {
-      console.log('Sending friend ERROR to server: ', res);
-    })
-  }
+      if (!newFriends.includes(friend)) {
+        axios.post(`/whereyouat/${username}/friends`, {
+          username: this.props.username,
+          fromWho: friend
+        }).then((res)=> {
+          this.props.getFriends(username)
+          console.log('Sending friend to server: ', res);
+        })
+      }
+    }
+  )}
+
 
   saveMessage(message, user) {
     console.log('trying to save message:', message);
@@ -79,7 +82,7 @@ class ChatClientComponent extends React.Component {
         </div>
         <div className='socket-chat-container'>
           <ul id="messages">
-            {this.props.chatArr.map((chat, i) => ( 
+            {this.props.chatArr.map((chat, i) => (
                 <div>
                   <li
                     className='user'
