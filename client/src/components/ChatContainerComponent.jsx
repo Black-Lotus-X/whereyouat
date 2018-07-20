@@ -8,41 +8,50 @@ class ChatContainerComponent extends React.Component {
   constructor(props){
     super(props);
     this.state ={
-      chatArr: []
+      chatArr: [],
+      selectedFriend: '',
+      chatInputIsVisible: true
     }
+
+    //Kinda hacky. This array save the existing chat when you load a 
+    //friend's favorite messages so chat can be restored
+    this.savedChat = [];
 
     // bind methods here
     this.selectFriend = this.selectFriend.bind(this);
-    this.deselectFriend = this.deselectFriend.bind(this);
     this.handleRecieveMessage = this.handleRecieveMessage.bind(this);
+    this.toggleChatInput = this.toggleChatInput.bind(this);
     
   }
 
   selectFriend(username) {
-    axios.get(`/whereyouat/${this.props.username}/messages`)
-    .then((response) => {
-      let allMessages = response.data;
-      console.log(allMessages);
-      let favoriteMessages = [];
-      for (let i = 0; i < allMessages.length; i++) {
-        if (allMessages[i].fromWho === username) {
-          favoriteMessages.push({
-            user: allMessages[i].fromWho,
-            message: allMessages[i].favoriteMessage
-          });
-        }
-      }
+    if (this.state.selectedFriend.length > 0 && this.state.selectedFriend === username) {
+      let newChatArray = this.savedChat.slice();
       this.setState({
-        chatArr: favoriteMessages
-      }, () => console.log('SATE AFTER SETSTATE', this.state.chatArr));
-    })
-  }
-
-  //Need to attach this to some dom click somewhere
-  deselectFriend() {
-    this.setState({
-      chatArr: [],
-    });
+        selectedFriend: '',
+        chatArr: newChatArray
+      })
+    } else {
+      axios.get(`/whereyouat/${this.props.username}/messages`)
+      .then((response) => {
+        this.selectedFriend = username;
+        let allMessages = response.data;
+        this.savedChat = this.state.chatArr.slice();
+        let favoriteMessages = [];
+        for (let i = 0; i < allMessages.length; i++) {
+          if (allMessages[i].fromWho === username) {
+            favoriteMessages.push({
+              user: allMessages[i].fromWho,
+              message: allMessages[i].favoriteMessage
+            });
+          }
+        }
+        this.setState({
+          chatArr: favoriteMessages,
+          selectedFriend: username
+        });
+      })
+    }
   }
 
   // use methods here
@@ -61,20 +70,29 @@ class ChatContainerComponent extends React.Component {
     })
   }
 
+  toggleChatInput() {
+    this.setState({
+      chatInputIsVisible: !this.state.chatInputIsVisible
+    })
+  }
+
   render(){
     return(
       <div className='chat-container-component'>
         <FriendsListComponent
+          selectedFriend={this.state.selectedFriend}
           username={this.props.username}
           deleteFriend={this.props.deleteFriend}
           friends={this.props.friends}
-          selectFriend={this.selectFriend}/>
+          selectFriend={this.selectFriend}
+          toggleChatInput={this.toggleChatInput}/>
         <ChatClientComponent
           getUserCount={this.props.getUserCount}
           getFriends={this.props.getFriends}
           username={this.props.username}
           chatArr={this.state.chatArr}
-          handleRecieveMessage={this.handleRecieveMessage}/>
+          handleRecieveMessage={this.handleRecieveMessage}
+          chatInputIsVisible={this.state.chatInputIsVisible}/>
         <GoogleMapsComponent
           long={this.props.long}
           lat={this.props.lat}/>

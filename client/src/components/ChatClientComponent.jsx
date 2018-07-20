@@ -125,14 +125,17 @@ class ChatClientComponent extends React.Component {
             )}
           </ul>
         </div>
-        <form action="" onSubmit={this.sendMessage}>
-          <i className="fas fa-keyboard"></i>
+        <form action="" onSubmit={(e) => {this.sendMessage(e); this.setState({userInput: ''})}}>
+          <i className="fas fa-keyboard"
+          style={this.props.chatInputIsVisible ? {display: 'inline-block'} : {display: 'none'}}></i>
           <input
             onChange={(e) => this.setState({userInput: e.target.value})}
             id="messageInput"
             placeholder='type message'
             autoComplete="off"
             required type='text'
+            value={this.state.userInput}
+            style={this.props.chatInputIsVisible ? {display: 'inline-block'} : {display: 'none'}}
           />
         </form>
       </div>

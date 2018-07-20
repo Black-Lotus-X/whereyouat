@@ -83,7 +83,7 @@ class Login extends React.Component {
                 <div>
                   <button
                     className='login-btn'
-                    onClick={(e) => {this.navItemClicked(e); this.props.getLocation()}}>Sign in</button>
+                    onClick={(e) => {if (this.state.userInput.length > 0) {this.navItemClicked(e); this.props.getLocation()}}}>Sign in</button>
                 </div>
               </form>
             </div>
@@ -128,7 +128,7 @@ class Login extends React.Component {
                 <div>
                   <button
                     className='login-btn'
-                    onClick={(e) => {this.navItemClicked2(e); this.props.getLocation()}}>Sign Up</button>
+                    onClick={(e) => {if (this.state.userInput.length > 0) {this.navItemClicked2(e); this.props.getLocation()}}}>Sign Up</button>
                 </div>
               </form>
             </div>

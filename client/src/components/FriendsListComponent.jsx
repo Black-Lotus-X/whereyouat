@@ -6,8 +6,6 @@ class FriendsListComponent extends React.Component {
     // bind methods here
   }
 
-  // place methods here
-
   render(){
     return(
       <div className='friends-list-container'>
@@ -21,8 +19,10 @@ class FriendsListComponent extends React.Component {
                 <li
                   onClick={(e) => this.props.deleteFriend(this.props.username, e.target.innerHTML)}
                   key={i}>{friend}</li>
-                <i className="fas fa-heart"
-                onClick={(e) => this.props.selectFriend(friend)}></i>
+                <i 
+                className="fas fa-heart"
+                onClick={(e) => {this.props.selectFriend(friend); this.props.toggleChatInput()}}
+                style={(this.props.selectedFriend.length === 0 || this.props.selectedFriend === friend) ? {display: 'block'} : {display: 'none'}}></i>  
             </div>
           )}
         </ul>
