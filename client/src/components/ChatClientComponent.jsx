@@ -120,6 +120,9 @@ class ChatClientComponent extends React.Component {
                   </li>
                   <li
                   className='user-message' onClick={(e) => this.saveMessage(chat.message, chat.user)}>: {chat.message} </li>
+                  <li className='save-icon-container'>
+                    <i className="fas fa-save"></i>
+                  </li>
                 </div>
               )
             )}

@@ -275,6 +275,16 @@ header {
   color: #ff6348;
 }
 
+.save-icon-container {
+  float: right;
+  list-style-type: none;
+  cursor: pointer;
+}
+.fa-save {
+  font-size: 15px;
+  color: red;
+}
+
 /***************************/
 /* Friends List Component  */
 /***************************/
@@ -367,3 +377,9 @@ header {
   height: 500px;
   width: 350px;
 }
+
+
+
+/***************************/
+/* TEST ANIMATIONS  */
+/***************************/
