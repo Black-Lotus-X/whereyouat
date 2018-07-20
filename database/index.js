@@ -6,3 +6,5 @@ var db = mongoose.connect('mongodb://Roman:HackReactor16@ds141621.mlab.com:41621
 });
 
 module.exports = db;
+
+// Change the mongoose connection, the current link will not work anymore once the Legacy project start.
