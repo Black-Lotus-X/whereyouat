@@ -13,7 +13,7 @@ class Login extends React.Component {
     this.switchSignUpScreen = this.switchSignUpScreen.bind(this);
   }
 
-  // place methods here
+  //Login button or submit
   navItemClicked(e){
     e.preventDefault();
     this.props.loginUser(this.state.userInput);
@@ -22,6 +22,7 @@ class Login extends React.Component {
     })
   }
 
+  //Signup button or submit
   navItemClicked2(e){
     e.preventDefault();
     this.props.signUpUser(this.state.userInput);
@@ -30,18 +31,21 @@ class Login extends React.Component {
     })
   }
 
+  //Toggle between signup and login box
   switchSignUpScreen () {
     this.setState({
       signedUp: !this.state.signedUp
     })
   }
 
+  //logout user
   logout(e){
     this.props.logout();
   }
 
 
   render(){
+      //Show login screen if this is true. signedUp is a poor choice of variable name.
       if(this.state.signedUp) {
         return (
           <div className='login-container'>
@@ -89,6 +93,7 @@ class Login extends React.Component {
             </div>
           </div>
         )
+        //Else show signup screen
       } else {
         return (
           <div className='login-container'>

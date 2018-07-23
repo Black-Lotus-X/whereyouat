@@ -8,6 +8,7 @@ class ChatContainerComponent extends React.Component {
   constructor(props){
     super(props);
     this.state ={
+      //chatArr is the array of chats that appears in chat. {user: 'username', message: 'blah blah blah'}
       chatArr: [],
       selectedFriend: '',
       chatInputIsVisible: true
@@ -24,7 +25,9 @@ class ChatContainerComponent extends React.Component {
     
   }
 
+  //Select a friend from your friends list to show that users friends
   selectFriend(username) {
+    //If user already viewing favorited Messages, restore chat from savedChat.
     if (this.state.selectedFriend.length > 0 && this.state.selectedFriend === username) {
       let newChatArray = this.savedChat.slice();
       this.setState({
@@ -33,6 +36,8 @@ class ChatContainerComponent extends React.Component {
       })
     } else {
       axios.get(`/whereyouat/${this.props.username}/messages`)
+      // Get all messages from server. Filter out the ones from the selected 
+      // friend and put them in chat array; Save existing chat to savedChat.
       .then((response) => {
         this.selectedFriend = username;
         let allMessages = response.data;
@@ -54,8 +59,7 @@ class ChatContainerComponent extends React.Component {
     }
   }
 
-  // use methods here
-
+  //Add new messages to the chat array
   handleRecieveMessage(dataRecievedFromServer) {
     console.log('UserInput entered: ', dataRecievedFromServer);
 
@@ -70,6 +74,7 @@ class ChatContainerComponent extends React.Component {
     })
   }
 
+  //Turn off/on chat bar when favoriteMessage is shown/hidden
   toggleChatInput() {
     this.setState({
       chatInputIsVisible: !this.state.chatInputIsVisible

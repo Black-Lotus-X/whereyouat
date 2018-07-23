@@ -32,6 +32,7 @@ class ChatClientComponent extends React.Component {
       }, () => console.log('number of active users: ', this.state.numUsers))
     });
 
+    //When a user disconnects, update number of users in chat
     this.socket.on('disconnect', (count) => {
       this.setState({
         numUsers: count
@@ -39,23 +40,23 @@ class ChatClientComponent extends React.Component {
     })
   }
 
-  // PLACE METHODS HERE
-
-
+  //Call disconnect() when user closes browser/navigates away
   componentDidMount() {
     window.onbeforeunload = this.disconnect;
   }
 
+  //Decrease number of users in chat, Tell server to delete this users coordinates
   disconnect(){
     this.socket.disconnect();
     axios.post('/chat/leave', {latitude: this.state.latitude, longitude: this.state.longitude});
   }
 
+
   handleMessage(data) {
     this.props.handleRecieveMessage(data);
   }
 
-  // click event for sending data to server
+  // click event for sending user's chat message to server
   sendMessage(e){
     e.preventDefault();
     // emit a chat message from your client to your server with the obj
@@ -65,7 +66,9 @@ class ChatClientComponent extends React.Component {
     });
   }
 
+  //save friend when you click on the friend in the chat
   saveFriend(friend, username) {
+    //Check if you already have this friend (There are cleaner ways this can be implemented)
     axios.get(`/whereyouat/${username}/friends`)
     .then((response) => {
       let newFriends = response.data.map((friendObject) => {
@@ -76,29 +79,28 @@ class ChatClientComponent extends React.Component {
       })
 
       if (!newFriends.includes(friend)) {
+        //If not, add this frien
         axios.post(`/whereyouat/${username}/friends`, {
           username: this.props.username,
           fromWho: friend
         }).then((res)=> {
+          //call getFriends to pull fresh friend list from server
           this.props.getFriends(username)
-          console.log('Sending friend to server: ', res);
         })
       }
     }
   )}
 
-
+  //save messsage to favorites when user clicks on it
   saveMessage(message, user) {
-    console.log('trying to save message:', message);
-    console.log('trying to save user', user)
     axios.post(`/whereyouat/${this.props.username}/messages`, {
       username: this.props.username,
       favoriteMessage: message,
       fromWho: user
     }).then((response) => {
-      console.log('message saved');
+      console.log('message saved')
     }).catch((err) => {
-      console.log('messgae save failure');
+      console.error('messgae save failure');
     })
   }
 
@@ -130,6 +132,7 @@ class ChatClientComponent extends React.Component {
         </div>
         <form action="" onSubmit={(e) => {this.sendMessage(e); this.setState({userInput: ''})}}>
           <i className="fas fa-keyboard"
+          //Show/hide keyboard icon when showing/hiding favoriteMessages of a friend
           style={this.props.chatInputIsVisible ? {display: 'inline-block'} : {display: 'none'}}></i>
           <input
             onChange={(e) => this.setState({userInput: e.target.value})}
@@ -138,6 +141,7 @@ class ChatClientComponent extends React.Component {
             autoComplete="off"
             required type='text'
             value={this.state.userInput}
+            //Show/hide chat input when showing/hiding favoriteMessages of a friend
             style={this.props.chatInputIsVisible ? {display: 'inline-block'} : {display: 'none'}}
           />
         </form>

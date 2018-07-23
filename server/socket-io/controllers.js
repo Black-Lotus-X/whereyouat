@@ -1,19 +1,26 @@
-let randomQueue = [];
 let users = {};
 let keyNum = 0;
-let roomNum = 0;
 
+//randomQueue is an array of the user userKeys of those waiting to join a random chat.
+//We decided not to connect pairs of people randomly but the commented functions work.
+//socket.io functionality connecting 2 users was not implemented
+//let randomQueue = [];
+//let roomNum = 0;
 
+//Adds a new user to the users object with the longitude and latitude
+//Commented lines also add that user to the randomQueue and set room to -1,
+// indicating the user does not have a room yet.
 exports.joinRandom = (req, res) => {
     console.log('REGISTERRING');
     let userKey = ++keyNum;
-    randomQueue.push(userKey);
     users[userKey] = req.body;
-    users[userKey].room = -1;
+    //randomQueue.push(userKey);
+    //users[userKey].room = -1;
     res.status(200).send();
     //res.send({keyNum: userKey});
 }
 
+//get center returns the coordinates at the center of all users in the chat
 exports.getCenter = (req,res) => {
     let totalLat = 0;
     let totalLong = 0;
@@ -32,6 +39,11 @@ exports.getCenter = (req,res) => {
     }
 }
 
+//Join room takes the userKey of the usr performing the request:
+//If the user has not been matched, matches the user with another user in
+//randomQueue if there is one, sets room number of both users in users object,
+//returns the room number to the user. If there is no match, returns status 4-4
+//If the user has already been placed in a room, returns that room.
 // exports.joinRoom = (req, res) => {
 //     let joiningNum = req.body.keyNum;
 //     let matchedNum = 0;
@@ -70,6 +82,7 @@ exports.getCenter = (req,res) => {
 //     res.status(404).send();
 // }
 
+//removes the user from the users object based on the users lat/long coordinates
 exports.disconnect = (req, res) => {
     let userKeys = Object.keys(users);
     for (let i = 0; i < userKeys.length; i++) {
@@ -81,7 +94,7 @@ exports.disconnect = (req, res) => {
     }
     res.status(200).send();
 
-
+    //Disconnect function if randomQueue is enabled
     // let disconnectingKey = req.body.keyNum;
     // for (let i = 0; i < randomQueue.length; i++) {
     //     if (randomQueue[i] === disconnectingKey) {

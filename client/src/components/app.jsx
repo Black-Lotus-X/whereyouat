@@ -10,6 +10,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      //True when user is logged out!!! Means, should we show login box.
       login: true,
       username: '',
       friends: [],
@@ -21,10 +22,8 @@ class App extends React.Component {
       removeLogoutBtn: false
     }
     // bind methods here
-    this.navItemClicked = this.navItemClicked.bind(this);
     this.loginUser = this.loginUser.bind(this);
     this.getFriends = this.getFriends.bind(this);
-    //this.userLogin = this.userLogin.bind(this);
     this.logout = this.logout.bind(this);
 
     this.getLocation = this.getLocation.bind(this);
@@ -58,11 +57,13 @@ class App extends React.Component {
 
   pollForCenter() {
     this.getCenter;
+    //Starts interval to get and update central location coordinates
     setInterval(() => {
       this.getCenter();
     }, 5000);
   }
 
+  //Gets the center coordinates of all connected users
   getCenter() {
     axios.get('/chat')
       .then((response) => {
@@ -89,15 +90,7 @@ class App extends React.Component {
     })
   }
 
-  navItemClicked(e){
-    e.preventDefault();
-    this.setState({
-      navItemShow: !this.state.navItemShow
-    })
-  }
-
   logout() {
-    console.log('LOGOUT WAS CLICKED');
     this.setState({
       login: true,
       username: '',
@@ -108,20 +101,7 @@ class App extends React.Component {
     })
   }
 
-  // userLogin(e) {
-  //   e.preventDefault();
-
-  //   this.setState({
-  //     login: !this.state.login
-  //   })
-  // }
-
-  // use methods here
   loginUser(username) {
-    console.log('success');
-
-  
-
     axios.get(`/whereyouat/${username}`)
     .then((data) => {
       this.setState({
@@ -187,14 +167,12 @@ class App extends React.Component {
 
 
   render() {
+    //If logged out. Login means whow or hide login, no is user logged in?
     if(this.state.login){
       return (
         <div>
           <NavComponent
             username={this.state.username}
-            userLogin={this.userLogin}
-            navItemShow={this.state.navItemShow}
-            navItemClicked={this.navItemClicked}
             loginUser={this.loginUser}
             loggedIn={this.state.loggedIn}
             loginError={this.state.loginError}
@@ -205,7 +183,6 @@ class App extends React.Component {
 
           <Login
             username={this.state.username}
-            userLogin={this.userLogin}
             navItemClicked={this.state.navItemClicked}
             loginUser={this.loginUser}
             loggedIn={this.state.loggedIn}
@@ -223,12 +200,9 @@ class App extends React.Component {
             logout={this.logout}
             login={this.state.login}
             removeLogoutBtn={this.state.removeLogoutBtn}
-            userLogin={this.userLogin}
             loginUser={this.loginUser}
             loggedIn={this.state.loggedIn}
             loginError={this.state.loginError}
-            navItemShow={this.state.navItemShow}
-            navItemClicked={this.navItemClicked}
           />
 
           <ChatContainerComponent

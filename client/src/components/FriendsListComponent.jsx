@@ -22,12 +22,14 @@ class FriendsListComponent extends React.Component {
                 <i 
                 className="fas fa-heart"
                 onClick={(e) => {this.props.selectFriend(friend); this.props.toggleChatInput()}}
+                //Only show heart of selected friend when friend is collected
                 style={(this.props.selectedFriend.length === 0 || this.props.selectedFriend === friend) ? {display: 'block'} : {display: 'none'}}></i>  
             </div>
           )}
         </ul>
         <div className='no-friends'>
           <i
+            //Only show sad face if you don't have friends
             style={this.props.friends.length > 0 ? {display: 'none'} : {display: 'block'}}
             className="fas fa-sad-tear">
           </i>
